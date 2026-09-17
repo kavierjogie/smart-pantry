@@ -1,6 +1,69 @@
 import { getRecipesForPantry } from '@/lib/recipe-api'
 import type { PantryItem, Recipe, RecipeMatch, RecipeIngredient } from '@/types'
 
+// Labels that sometimes appear on their own line in place of an actual step
+// (e.g. a stray "Instructions" header left over from the source recipe).
+const STEP_LABEL_WORDS = new Set([
+  'instructions', 'instruction', 'directions', 'direction',
+  'method', 'methods', 'steps', 'step', 'preparation', 'procedure',
+])
+
+// Matches a leading quantity + unit of measure, the shape of an ingredient
+// line rather than a cooking step (e.g. "2 cups flour", "1 lb. cheese").
+// Real instructions almost always open with an imperative verb rather than a
+// bare quantity, so any line with this shape is treated as ingredient noise
+// even if it contains past-tense descriptor words like "grated" or "diced".
+const INGREDIENT_LEAD = /^[\d¼½¾⅓⅔⅛⅜⅝⅞\s./-]*\s*(g|kg|mg|ml|l|litres?|liters?|tsp|teaspoons?|tbsp|tablespoons?|cups?|oz|ounces?|lbs?|pounds?|pt|pints?|qt|quarts?|gal|gallons?|cloves?|cans?|packages?|pkg|sticks?|bunch(?:es)?|slices?|pinch(?:es)?|dash(?:es)?|sprigs?)\.?\s+[a-z]/i
+
+// Strips numbering artifacts from the start of a line, such as "1.", "1)",
+// "(1)", "Step 1:", or malformed markdown like "**1**", repeatedly in case
+// multiple markers were stacked (e.g. "**1**Step 1: ...").
+function stripLeadingNumbering(text: string): string {
+  let result = text
+  for (let i = 0; i < 5; i += 1) {
+    const before = result
+    result = result
+      .replace(/^\*\*\s*\d+\s*\*\*\s*/, '')
+      .replace(/^\(?\d{1,3}\)?\s*[.):\-]\s*/, '')
+      .replace(/^step\s*\d+\s*[:.\-]?\s*/i, '')
+      .trim()
+    if (result === before) break
+  }
+  return result
+}
+
+// Normalizes raw recipe instructions from any upstream API shape (a single
+// newline-delimited string, or an array of step strings) into a clean list
+// of real cooking steps. Drops stray numbering artifacts (standalone "1",
+// "2", malformed "**1**step 1"), leftover section labels ("Instructions"),
+// and ingredient lines that were mistakenly included as steps, while
+// preserving legitimate instructions that happen to contain numbers
+// (cook times, temperatures, quantities).
+export function normalizeInstructions(raw: unknown): string[] {
+  const rawLines: string[] = Array.isArray(raw)
+    ? raw.filter((line): line is string => typeof line === 'string')
+    : typeof raw === 'string'
+      ? raw.split(/\r\n|\r|\n/)
+      : []
+
+  const cleaned: string[] = []
+  for (const rawLine of rawLines) {
+    let text = rawLine.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+    if (!text) continue
+
+    text = stripLeadingNumbering(text)
+    text = text.replace(/\*\*/g, '').trim()
+    if (!text) continue
+
+    if (/^\d+$/.test(text)) continue
+    if (STEP_LABEL_WORDS.has(text.toLowerCase().replace(/[.:]+$/, ''))) continue
+    if (INGREDIENT_LEAD.test(text)) continue
+
+    cleaned.push(text)
+  }
+  return cleaned
+}
+
 function normalizeIngredientName(name: string): string {
   return name.toLowerCase().trim()
     .replace(/[^a-z0-9]+/g, ' ')

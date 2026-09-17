@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 
-import { matchRecipesToPantry } from './recipes.ts'
+import { matchRecipesToPantry, normalizeInstructions } from './recipes.ts'
 import type { PantryItem, Recipe } from '@/types'
 
 const pantry: PantryItem[] = [
@@ -120,4 +120,43 @@ test('generic fish pantry matches specific fish ingredients', () => {
   const matches = matchRecipesToPantry(fishPantry, recipes)
   assert.equal(matches[0].recipe.name, 'Salmon Rice Bowl')
   assert.ok(matches[0].availableIngredients.includes('salmon'))
+})
+
+test('normalizeInstructions strips malformed numbering and duplicate numbers', () => {
+  const raw = [
+    '**1**step 1',
+    '**2**Cook the potato in boiling water for 8-10 mins...',
+    '**3**2',
+    '**4**Add the potato and cook for 5 mins...',
+  ].join('\r\n')
+
+  assert.deepEqual(normalizeInstructions(raw), [
+    'Cook the potato in boiling water for 8-10 mins...',
+    'Add the potato and cook for 5 mins...',
+  ])
+})
+
+test('normalizeInstructions drops standalone numbers and step labels', () => {
+  const raw = ['1', 'Instructions', '2)', '1) Instructions', '3. Grate the cheese and take out the ham.'].join('\n')
+  assert.deepEqual(normalizeInstructions(raw), ['Grate the cheese and take out the ham.'])
+})
+
+test('normalizeInstructions excludes ingredient lines but keeps steps with numbers', () => {
+  const raw = [
+    '1 lb. sharp yellow cheese, grated',
+    '2 cups all-purpose flour',
+    'Preheat the oven to 350°F and bake for 25 minutes.',
+    'Mix all remaining ingredients together in a large bowl.',
+  ].join('\n')
+
+  assert.deepEqual(normalizeInstructions(raw), [
+    'Preheat the oven to 350°F and bake for 25 minutes.',
+    'Mix all remaining ingredients together in a large bowl.',
+  ])
+})
+
+test('normalizeInstructions handles array input and non-string/empty input', () => {
+  assert.deepEqual(normalizeInstructions(['Chop onions.', '  ', '2']), ['Chop onions.'])
+  assert.deepEqual(normalizeInstructions(undefined), [])
+  assert.deepEqual(normalizeInstructions(null), [])
 })

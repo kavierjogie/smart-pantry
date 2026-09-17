@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { normalizeInstructions } from '@/lib/recipes'
 import type { Recipe, RecipeDifficulty, RecipeIngredient } from '@/types'
 
 const THEMEALDB_BASE_URL = process.env.THEMEALDB_API_BASE_URL || 'https://www.themealdb.com/api/json/v1/1'
@@ -23,10 +24,6 @@ const CATEGORY_ALIASES: Record<string, string> = {
 const ANIMAL_INGREDIENTS = /beef|chicken|pork|lamb|goat|turkey|duck|ham|bacon|sausage|anchov|cod|fish|haddock|mackerel|salmon|sardine|shrimp|prawn|tuna|trout|crab|lobster|mussel|clam|oyster|squid|octopus|egg|milk|cream|cheese|butter|yogurt|honey/i
 const DAIRY_INGREDIENTS = /milk|cream|cheese|butter|yogurt|ghee|whey/i
 const GLUTEN_INGREDIENTS = /flour|bread|pasta|noodle|couscous|barley|rye|wheat|soy sauce/i
-
-function stripHtml(value: string): string {
-  return value.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
-}
 
 function normalizeDietaryTag(value: string): string {
   const tag = value.toLowerCase().trim().replace(/\s+/g, '-')
@@ -67,9 +64,7 @@ function toRecipe(meal: MealDetails): Recipe | null {
   if (typeof meal.idMeal !== 'string' || typeof meal.strMeal !== 'string') return null
   const ingredients = parseIngredients(meal)
   if (ingredients.length === 0) return null
-  const instructions = typeof meal.strInstructions === 'string'
-    ? meal.strInstructions.split(/\r?\n+/).map(stripHtml).filter(Boolean)
-    : []
+  const instructions = normalizeInstructions(meal.strInstructions)
   const tags = typeof meal.strTags === 'string'
     ? meal.strTags.split(',').map(normalizeDietaryTag).filter(Boolean)
     : []
