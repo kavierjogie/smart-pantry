@@ -10,6 +10,7 @@ import { getProfile } from '@/lib/db/profile'
 import { isExpiringSoon, daysUntilExpiry } from '@/lib/utils'
 import type { ChatMessage, PantryItem } from '@/types'
 import { cn } from '@/lib/utils'
+import { ChatMarkdown } from '@/components/assistant/ChatMarkdown'
 
 const QUICK_PROMPTS = [
   "What can I make with what I have?",
@@ -198,12 +199,12 @@ export default function AssistantPage() {
               {msg.role === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
             </div>
             <div className={cn(
-              'max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap',
+              'max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed',
               msg.role === 'user'
-                ? 'bg-emerald-600 text-white rounded-tr-sm'
+                ? 'bg-emerald-600 text-white rounded-tr-sm whitespace-pre-wrap'
                 : 'bg-white border text-slate-800 rounded-tl-sm shadow-sm'
             )}>
-              {msg.content}
+              {msg.role === 'assistant' ? <ChatMarkdown content={msg.content} /> : msg.content}
             </div>
           </div>
         ))}
