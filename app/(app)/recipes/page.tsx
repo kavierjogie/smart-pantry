@@ -25,18 +25,22 @@ const SORT_OPTIONS = [
 
 // Profile preferences can come back as undefined/null (no profile row yet),
 // an empty array, or (defensively) an object of flags — none of those count
-// as an active filter, only non-empty preference strings do.
+// as an active filter, only non-empty preference strings do. They're also
+// scoped to DIETARY_FILTERS: the Profile page offers a broader preference
+// list (e.g. paleo, halal, kosher, low-sodium) that has no matching toggle
+// here and that the recipe API never tags a recipe with, so treating one of
+// those as an active filter would silently zero out every result with no
+// visible chip to explain why.
 function normalizeDietaryPreferences(prefs: unknown): string[] {
-  if (!prefs) return []
+  let values: string[] = []
   if (Array.isArray(prefs)) {
-    return prefs.filter((p): p is string => typeof p === 'string' && p.trim().length > 0)
-  }
-  if (typeof prefs === 'object') {
-    return Object.entries(prefs as Record<string, unknown>)
+    values = prefs.filter((p): p is string => typeof p === 'string' && p.trim().length > 0)
+  } else if (prefs && typeof prefs === 'object') {
+    values = Object.entries(prefs as Record<string, unknown>)
       .filter(([, active]) => Boolean(active))
       .map(([tag]) => tag)
   }
-  return []
+  return values.filter((p) => DIETARY_FILTERS.includes(p.toLowerCase()))
 }
 
 export default function RecipesPage() {
