@@ -23,6 +23,22 @@ const SORT_OPTIONS = [
   { value: 'difficulty', label: 'Easiest first' },
 ]
 
+// Profile preferences can come back as undefined/null (no profile row yet),
+// an empty array, or (defensively) an object of flags — none of those count
+// as an active filter, only non-empty preference strings do.
+function normalizeDietaryPreferences(prefs: unknown): string[] {
+  if (!prefs) return []
+  if (Array.isArray(prefs)) {
+    return prefs.filter((p): p is string => typeof p === 'string' && p.trim().length > 0)
+  }
+  if (typeof prefs === 'object') {
+    return Object.entries(prefs as Record<string, unknown>)
+      .filter(([, active]) => Boolean(active))
+      .map(([tag]) => tag)
+  }
+  return []
+}
+
 export default function RecipesPage() {
   const [userId, setUserId] = useState<string | null>(null)
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([])
@@ -44,7 +60,7 @@ export default function RecipesPage() {
       const fetchedRecipes = await getRecipesForPantry(pantry, [])
       setPantryItems(pantry)
       setRecipes(fetchedRecipes)
-      setDietaryFilters(profile?.dietary_preferences || [])
+      setDietaryFilters(normalizeDietaryPreferences(profile?.dietary_preferences))
     } catch (err) {
       console.error(err)
       toast.error(err instanceof Error ? err.message : 'Failed to load recipes')

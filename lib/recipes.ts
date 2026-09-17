@@ -110,11 +110,13 @@ export function matchRecipesToPantry(
   recipes: Recipe[] = [],
   dietaryFilters: string[] = []
 ): RecipeMatch[] {
+  const activeFilters = dietaryFilters.filter((f) => f.trim().length > 0)
+
   return recipes
     .filter((recipe) => {
-      if (dietaryFilters.length === 0) return true
+      if (activeFilters.length === 0) return true
       const tags = new Set((recipe.dietary_tags ?? []).map((t) => t.toLowerCase()))
-      return dietaryFilters.every((f) => tags.has(f.toLowerCase()))
+      return activeFilters.every((f) => tags.has(f.toLowerCase()))
     })
     .map((recipe) => {
       const required = recipe.ingredients.filter((i) => !i.optional)
