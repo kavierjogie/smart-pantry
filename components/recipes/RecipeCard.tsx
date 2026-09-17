@@ -1,13 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Clock, ChefHat, CheckCircle2, XCircle, Play, Bookmark, ShoppingCart } from 'lucide-react'
+import { ChefHat, CheckCircle2, XCircle, Play, Bookmark, ShoppingCart } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { generateYouTubeSearchUrl, formatRecipeTime } from '@/lib/utils'
+import { generateYouTubeSearchUrl } from '@/lib/utils'
 import type { RecipeMatch, ShoppingItem } from '@/types'
 
 type Props = {
@@ -64,10 +64,6 @@ export function RecipeCard({ match, onSave, onAddToShopping, isSaved }: Props) {
 
           <div className="flex items-center gap-3 text-xs text-slate-500">
             <div className="flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5" />
-              {formatRecipeTime(recipe.prep_time, recipe.cooking_time)}
-            </div>
-            <div className="flex items-center gap-1">
               <ChefHat className="h-3.5 w-3.5" />
               {recipe.cuisine}
             </div>
@@ -100,7 +96,6 @@ export function RecipeCard({ match, onSave, onAddToShopping, isSaved }: Props) {
             <div className="flex flex-wrap gap-2">
               <Badge variant={difficultyColor[recipe.difficulty]} className="capitalize">{recipe.difficulty}</Badge>
               <Badge variant="secondary">{recipe.cuisine}</Badge>
-              <Badge variant="outline" className="gap-1"><Clock className="h-3 w-3" />{formatRecipeTime(recipe.prep_time, recipe.cooking_time)}</Badge>
               <Badge variant="outline">Serves {recipe.servings}</Badge>
               {(recipe.dietary_tags ?? []).map(t => (
                 <Badge key={t} variant="info" className="capitalize">{t}</Badge>

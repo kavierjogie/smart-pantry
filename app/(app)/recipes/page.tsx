@@ -20,7 +20,6 @@ const DIETARY_FILTERS = [
 
 const SORT_OPTIONS = [
   { value: 'match', label: 'Best match' },
-  { value: 'time', label: 'Quickest' },
   { value: 'difficulty', label: 'Easiest first' },
 ]
 
@@ -74,13 +73,6 @@ export default function RecipesPage() {
     const filtered = showOnlyAvailable ? items.filter(m => m.matchPercentage === 100) : items
     return [...filtered].sort((a, b) => {
       if (sort === 'match') return b.matchPercentage - a.matchPercentage
-      if (sort === 'time') {
-        const aTime = a.recipe.prep_time === null || a.recipe.cooking_time === null
-          ? Infinity : a.recipe.prep_time + a.recipe.cooking_time
-        const bTime = b.recipe.prep_time === null || b.recipe.cooking_time === null
-          ? Infinity : b.recipe.prep_time + b.recipe.cooking_time
-        return aTime - bTime
-      }
       if (sort === 'difficulty') {
         const d = { easy: 0, medium: 1, hard: 2 }
         return d[a.recipe.difficulty] - d[b.recipe.difficulty]
