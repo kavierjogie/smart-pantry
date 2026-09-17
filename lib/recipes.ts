@@ -113,9 +113,8 @@ export function matchRecipesToPantry(
   return recipes
     .filter((recipe) => {
       if (dietaryFilters.length === 0) return true
-      return dietaryFilters.some((f) =>
-        recipe.dietary_tags.map((t) => t.toLowerCase()).includes(f.toLowerCase())
-      )
+      const tags = new Set((recipe.dietary_tags ?? []).map((t) => t.toLowerCase()))
+      return dietaryFilters.every((f) => tags.has(f.toLowerCase()))
     })
     .map((recipe) => {
       const required = recipe.ingredients.filter((i) => !i.optional)

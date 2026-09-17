@@ -39,11 +39,13 @@ export default function RecipesPage() {
         getPantryItems(uid),
         getProfile(uid),
       ])
-      const initialFilters = profile?.dietary_preferences || []
-      const fetchedRecipes = await getRecipesForPantry(pantry, initialFilters)
+      // Fetch the broadest recipe set from the API and let the client-side
+      // filter own dietary matching, so toggling filters afterward isn't
+      // limited to whatever the initial profile preferences happened to be.
+      const fetchedRecipes = await getRecipesForPantry(pantry, [])
       setPantryItems(pantry)
       setRecipes(fetchedRecipes)
-      setDietaryFilters(initialFilters)
+      setDietaryFilters(profile?.dietary_preferences || [])
     } catch (err) {
       console.error(err)
       toast.error(err instanceof Error ? err.message : 'Failed to load recipes')

@@ -74,7 +74,7 @@ export function RecipeCard({ match, onSave, onAddToShopping, isSaved }: Props) {
           </div>
 
           <div className="flex flex-wrap gap-1">
-            {recipe.dietary_tags.slice(0, 3).map((tag) => (
+            {(recipe.dietary_tags ?? []).slice(0, 3).map((tag) => (
               <Badge key={tag} variant="secondary" className="text-xs capitalize">{tag}</Badge>
             ))}
           </div>
@@ -102,7 +102,7 @@ export function RecipeCard({ match, onSave, onAddToShopping, isSaved }: Props) {
               <Badge variant="secondary">{recipe.cuisine}</Badge>
               <Badge variant="outline" className="gap-1"><Clock className="h-3 w-3" />{recipe.prep_time + recipe.cooking_time} min</Badge>
               <Badge variant="outline">Serves {recipe.servings}</Badge>
-              {recipe.dietary_tags.map(t => (
+              {(recipe.dietary_tags ?? []).map(t => (
                 <Badge key={t} variant="info" className="capitalize">{t}</Badge>
               ))}
             </div>
