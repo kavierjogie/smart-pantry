@@ -24,7 +24,7 @@ export async function upsertProfile(
       user_id: userId,
       ...updates,
       updated_at: new Date().toISOString(),
-    })
+    }, { onConflict: 'user_id' })
     .select()
     .single()
 
