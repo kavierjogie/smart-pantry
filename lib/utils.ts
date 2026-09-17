@@ -78,6 +78,17 @@ export function formatCurrency(amount: number): string {
   }).format(amount)
 }
 
+export function formatRecipeTime(prepTime: number | null, cookingTime: number | null): string {
+  if (prepTime === null || cookingTime === null) return 'Time unavailable'
+  const totalMinutes = prepTime + cookingTime
+  if (totalMinutes <= 0) return 'Time unavailable'
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+  if (hours === 0) return `${minutes} min`
+  if (minutes === 0) return `${hours} hr`
+  return `${hours} hr ${minutes} min`
+}
+
 export function generateYouTubeSearchUrl(recipeName: string): string {
   const query = encodeURIComponent(`${recipeName} recipe cooking`)
   return `https://www.youtube.com/results?search_query=${query}`

@@ -82,8 +82,8 @@ export type Recipe = {
   description: string
   ingredients: RecipeIngredient[]
   instructions: string[]
-  cooking_time: number
-  prep_time: number
+  cooking_time: number | null
+  prep_time: number | null
   servings: number
   difficulty: RecipeDifficulty
   dietary_tags: string[]

@@ -33,9 +33,12 @@ function normalizeDietaryTag(value: string): string {
   return tag === 'ketogenic' ? 'keto' : tag
 }
 
-function getDifficulty(minutes: number): RecipeDifficulty {
-  if (minutes <= 30) return 'easy'
-  if (minutes <= 60) return 'medium'
+// TheMealDB does not expose prep/cook time, so difficulty is estimated
+// from recipe complexity (ingredient and instruction step counts) instead.
+function getDifficulty(ingredientCount: number, instructionCount: number): RecipeDifficulty {
+  const complexity = ingredientCount + instructionCount
+  if (complexity <= 10) return 'easy'
+  if (complexity <= 16) return 'medium'
   return 'hard'
 }
 
@@ -76,10 +79,10 @@ function toRecipe(meal: MealDetails): Recipe | null {
     description: `${typeof meal.strArea === 'string' && meal.strArea ? `${meal.strArea} cuisine` : 'TheMealDB recipe'} matched to your pantry.`,
     ingredients,
     instructions,
-    cooking_time: 0,
-    prep_time: 0,
+    cooking_time: null,
+    prep_time: null,
     servings: 1,
-    difficulty: getDifficulty(0),
+    difficulty: getDifficulty(ingredients.length, instructions.length),
     dietary_tags: [...new Set([...tags, ...getDietaryTags(ingredients)])],
     cuisine: typeof meal.strArea === 'string' && meal.strArea.trim() ? meal.strArea.trim() : 'International',
     image_url: typeof meal.strMealThumb === 'string' ? meal.strMealThumb : null,
