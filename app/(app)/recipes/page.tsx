@@ -9,7 +9,6 @@ import { getPantryItems } from '@/lib/db/pantry'
 import { addShoppingItem } from '@/lib/db/shopping'
 import { matchRecipesToPantry } from '@/lib/recipes'
 import { getRecipesForPantry } from '@/lib/recipe-api'
-import { getProfile } from '@/lib/db/profile'
 import type { PantryItem, Recipe, RecipeMatch, ShoppingItem } from '@/types'
 import { toast } from 'sonner'
 
@@ -23,26 +22,6 @@ const SORT_OPTIONS = [
   { value: 'difficulty', label: 'Easiest first' },
 ]
 
-// Profile preferences can come back as undefined/null (no profile row yet),
-// an empty array, or (defensively) an object of flags — none of those count
-// as an active filter, only non-empty preference strings do. They're also
-// scoped to DIETARY_FILTERS: the Profile page offers a broader preference
-// list (e.g. paleo, halal, kosher, low-sodium) that has no matching toggle
-// here and that the recipe API never tags a recipe with, so treating one of
-// those as an active filter would silently zero out every result with no
-// visible chip to explain why.
-function normalizeDietaryPreferences(prefs: unknown): string[] {
-  let values: string[] = []
-  if (Array.isArray(prefs)) {
-    values = prefs.filter((p): p is string => typeof p === 'string' && p.trim().length > 0)
-  } else if (prefs && typeof prefs === 'object') {
-    values = Object.entries(prefs as Record<string, unknown>)
-      .filter(([, active]) => Boolean(active))
-      .map(([tag]) => tag)
-  }
-  return values.filter((p) => DIETARY_FILTERS.includes(p.toLowerCase()))
-}
-
 export default function RecipesPage() {
   const [userId, setUserId] = useState<string | null>(null)
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([])
@@ -54,17 +33,13 @@ export default function RecipesPage() {
 
   const loadData = useCallback(async (uid: string) => {
     try {
-      const [pantry, profile] = await Promise.all([
-        getPantryItems(uid),
-        getProfile(uid),
-      ])
+      const pantry = await getPantryItems(uid)
       // Fetch the broadest recipe set from the API and let the client-side
       // filter own dietary matching, so toggling filters afterward isn't
       // limited to whatever the initial profile preferences happened to be.
       const fetchedRecipes = await getRecipesForPantry(pantry, [])
       setPantryItems(pantry)
       setRecipes(fetchedRecipes)
-      setDietaryFilters(normalizeDietaryPreferences(profile?.dietary_preferences))
     } catch (err) {
       console.error(err)
       toast.error(err instanceof Error ? err.message : 'Failed to load recipes')
