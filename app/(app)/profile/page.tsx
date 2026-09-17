@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { User, Save } from 'lucide-react'
+import { Save } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,6 +10,8 @@ import { createClient } from '@/lib/supabase/client'
 import { getProfile, upsertProfile } from '@/lib/db/profile'
 import { DIETARY_OPTIONS, ALLERGY_OPTIONS } from '@/lib/data'
 import { toast } from 'sonner'
+import { Skeleton } from '@/components/ui/skeleton'
+import { TogglePill } from '@/components/ui/toggle-pill'
 
 function TagPicker({ label, options, selected, onChange }: {
   label: string; options: string[]; selected: string[]; onChange: (v: string[]) => void
@@ -22,18 +24,9 @@ function TagPicker({ label, options, selected, onChange }: {
       <Label>{label}</Label>
       <div className="flex flex-wrap gap-2">
         {options.map((opt) => (
-          <button
-            key={opt}
-            type="button"
-            onClick={() => toggle(opt)}
-            className={`rounded-full px-3 py-1 text-sm font-medium border transition-colors capitalize ${
-              selected.includes(opt)
-                ? 'bg-emerald-600 text-white border-emerald-600'
-                : 'bg-white text-slate-600 border-slate-200 hover:border-emerald-300'
-            }`}
-          >
+          <TogglePill key={opt} active={selected.includes(opt)} onClick={() => toggle(opt)} className="text-sm py-1">
             {opt}
-          </button>
+          </TogglePill>
         ))}
       </div>
     </div>
@@ -88,8 +81,13 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <User className="h-8 w-8 text-slate-300 animate-pulse" />
+      <div className="space-y-6 max-w-2xl">
+        <div className="space-y-2">
+          <Skeleton className="h-7 w-56" />
+          <Skeleton className="h-4 w-72" />
+        </div>
+        <Skeleton className="h-40" />
+        <Skeleton className="h-48" />
       </div>
     )
   }
@@ -99,7 +97,7 @@ export default function ProfilePage() {
       <div>
         <h1 className="text-2xl font-bold text-slate-900">Profile & Preferences</h1>
         <p className="text-slate-500 text-sm mt-1">
-          Your preferences are used to filter recipe recommendations
+          Your preferences personalize the AI Assistant&apos;s suggestions
         </p>
       </div>
 

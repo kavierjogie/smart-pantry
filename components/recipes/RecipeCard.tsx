@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { ChefHat, CheckCircle2, XCircle, Play, Bookmark, ShoppingCart } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -23,6 +24,41 @@ const difficultyColor = {
   hard: 'destructive',
 } as const
 
+const CUISINE_GRADIENTS: Record<string, string> = {
+  Italian: 'from-red-400 to-amber-400',
+  Asian: 'from-rose-400 to-orange-400',
+  European: 'from-sky-400 to-indigo-400',
+  'Middle Eastern': 'from-amber-400 to-orange-500',
+  Indian: 'from-orange-400 to-red-500',
+  Greek: 'from-blue-400 to-cyan-400',
+}
+
+function RecipeImagePlaceholder({ cuisine, className }: { cuisine: string; className?: string }) {
+  const gradient = CUISINE_GRADIENTS[cuisine] ?? 'from-emerald-400 to-teal-500'
+  return (
+    <div className={`flex items-center justify-center bg-gradient-to-br ${gradient} ${className ?? ''}`}>
+      <ChefHat className="h-10 w-10 text-white/80" />
+    </div>
+  )
+}
+
+function RecipeImage({ recipe, className }: { recipe: Props['match']['recipe']; className?: string }) {
+  if (recipe.image_url) {
+    return (
+      <div className={`relative overflow-hidden ${className ?? ''}`}>
+        <Image
+          src={recipe.image_url}
+          alt={recipe.name}
+          fill
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          className="object-cover"
+        />
+      </div>
+    )
+  }
+  return <RecipeImagePlaceholder cuisine={recipe.cuisine} className={className} />
+}
+
 export function RecipeCard({ match, onSave, onAddToShopping, isSaved }: Props) {
   const [open, setOpen] = useState(false)
   const { recipe, availableIngredients, missingIngredients, matchPercentage } = match
@@ -43,7 +79,8 @@ export function RecipeCard({ match, onSave, onAddToShopping, isSaved }: Props) {
 
   return (
     <>
-      <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setOpen(true)}>
+      <Card className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onClick={() => setOpen(true)}>
+        <RecipeImage recipe={recipe} className="h-36 w-full" />
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="text-base leading-snug">{recipe.name}</CardTitle>
@@ -85,12 +122,16 @@ export function RecipeCard({ match, onSave, onAddToShopping, isSaved }: Props) {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl">{recipe.name}</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+          <RecipeImage recipe={recipe} className="h-48 w-full" />
 
-          <div className="space-y-5">
+          <div className="px-6 pt-6">
+            <DialogHeader>
+              <DialogTitle className="text-xl">{recipe.name}</DialogTitle>
+            </DialogHeader>
+          </div>
+
+          <div className="space-y-5 px-6 pb-6">
             <p className="text-slate-600">{recipe.description}</p>
 
             <div className="flex flex-wrap gap-2">

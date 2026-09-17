@@ -4,6 +4,7 @@ import { createElement, useState } from 'react'
 import { Pencil, Trash2, AlertTriangle } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { PantryItemForm } from './PantryItemForm'
@@ -31,8 +32,8 @@ export function PantryItemCard({ item, onUpdate, onDelete, userId }: Props) {
 
   return (
     <>
-      <div className={cn(
-        'flex items-center gap-3 rounded-xl border bg-white p-4 shadow-sm hover:shadow-md transition-shadow',
+      <Card className={cn(
+        'flex items-center gap-3 p-4 hover:shadow-md transition-shadow',
         expired ? 'border-red-200 bg-red-50/30' : expiringSoon ? 'border-amber-200 bg-amber-50/30' : ''
       )}>
         <div className="flex-shrink-0 text-slate-500">
@@ -101,7 +102,7 @@ export function PantryItemCard({ item, onUpdate, onDelete, userId }: Props) {
             </AlertDialogContent>
           </AlertDialog>
         </div>
-      </div>
+      </Card>
 
       <Dialog open={editing} onOpenChange={setEditing}>
         <DialogContent>

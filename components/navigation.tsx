@@ -106,6 +106,7 @@ export function MobileNav() {
         </div>
         <button
           onClick={() => setOpen(!open)}
+          aria-label={open ? 'Close menu' : 'Open menu'}
           className="rounded-lg p-2 text-slate-600 hover:bg-slate-100"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

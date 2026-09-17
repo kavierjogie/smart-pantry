@@ -5,6 +5,7 @@ import { Trash2, ArrowDownToLine } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -33,8 +34,8 @@ export function ShoppingItemRow({ item, onToggle, onDelete, onMoveToStock }: Pro
 
   return (
     <>
-      <div className={cn(
-        'flex items-center gap-3 rounded-xl border bg-white p-3.5 shadow-sm transition-all',
+      <Card className={cn(
+        'flex items-center gap-3 p-3.5 transition-all',
         item.checked ? 'opacity-50' : ''
       )}>
         <Checkbox
@@ -80,7 +81,7 @@ export function ShoppingItemRow({ item, onToggle, onDelete, onMoveToStock }: Pro
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
-      </div>
+      </Card>
 
       <Dialog open={moveOpen} onOpenChange={setMoveOpen}>
         <DialogContent>

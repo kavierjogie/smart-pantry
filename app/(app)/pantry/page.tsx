@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PantryItemCard } from '@/components/pantry/PantryItemCard'
 import { PantryItemForm } from '@/components/pantry/PantryItemForm'
+import { Skeleton } from '@/components/ui/skeleton'
+import { EmptyState } from '@/components/ui/empty-state'
 import { createClient } from '@/lib/supabase/client'
 import { getPantryItems, addPantryItem, updatePantryItem, deletePantryItem } from '@/lib/db/pantry'
 import { CATEGORIES } from '@/lib/data'
@@ -162,23 +164,19 @@ export default function PantryPage() {
           {loading ? (
             <div className="grid gap-3">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-20 rounded-xl bg-slate-100 animate-pulse" />
+                <Skeleton key={i} className="h-20" />
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <Package className="h-12 w-12 text-slate-200 mb-4" />
-              <p className="font-medium text-slate-500">
-                {search || categoryFilter !== 'all'
-                  ? 'No items match your filters'
-                  : 'Your pantry is empty'}
-              </p>
-              {!search && categoryFilter === 'all' && (
-                <Button className="mt-4" onClick={() => setAddingItem(true)}>
-                  Add your first item
-                </Button>
-              )}
-            </div>
+            <EmptyState
+              icon={Package}
+              title={search || categoryFilter !== 'all' ? 'No items match your filters' : 'Your pantry is empty'}
+              action={
+                !search && categoryFilter === 'all' && (
+                  <Button onClick={() => setAddingItem(true)}>Add your first item</Button>
+                )
+              }
+            />
           ) : (
             <div className="grid gap-3">
               {filtered.map((item) => (

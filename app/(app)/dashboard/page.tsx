@@ -18,6 +18,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { PantryItemForm } from '@/components/pantry/PantryItemForm'
 import { addPantryItem } from '@/lib/db/pantry'
 import { addShoppingItem } from '@/lib/db/shopping'
+import { Skeleton } from '@/components/ui/skeleton'
+import { EmptyState } from '@/components/ui/empty-state'
 
 function StatCard({ icon: Icon, label, value, sub, color }: {
   icon: React.ElementType; label: string; value: number | string; sub?: string; color: string
@@ -90,10 +92,29 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="flex flex-col items-center gap-2 text-slate-400">
-          <ChefHat className="h-8 w-8 animate-pulse" />
-          <p className="text-sm">Loading your pantry…</p>
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-7 w-40" />
+            <Skeleton className="h-4 w-52" />
+          </div>
+          <Skeleton className="h-9 w-28" />
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-24" />
+          ))}
+        </div>
+        <div className="grid lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-64" />
+            ))}
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-40" />
+            <Skeleton className="h-40" />
+          </div>
         </div>
       </div>
     )
@@ -187,12 +208,16 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : (
-            <Card className="flex flex-col items-center justify-center py-12 text-center">
-              <ChefHat className="h-10 w-10 text-slate-300 mb-3" />
-              <p className="font-medium text-slate-600">Add pantry items to see recipe suggestions</p>
-              <Button className="mt-4" size="sm" onClick={() => setAddingItem(true)}>
-                Add your first item
-              </Button>
+            <Card>
+              <EmptyState
+                icon={ChefHat}
+                title="Add pantry items to see recipe suggestions"
+                action={
+                  <Button size="sm" onClick={() => setAddingItem(true)}>
+                    Add your first item
+                  </Button>
+                }
+              />
             </Card>
           )}
         </div>

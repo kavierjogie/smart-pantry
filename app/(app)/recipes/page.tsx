@@ -4,6 +4,9 @@ import { useEffect, useState, useCallback } from 'react'
 import { BookOpen, Filter } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { RecipeCard } from '@/components/recipes/RecipeCard'
+import { Skeleton } from '@/components/ui/skeleton'
+import { EmptyState } from '@/components/ui/empty-state'
+import { TogglePill } from '@/components/ui/toggle-pill'
 import { createClient } from '@/lib/supabase/client'
 import { getPantryItems } from '@/lib/db/pantry'
 import { addShoppingItem } from '@/lib/db/shopping'
@@ -117,17 +120,9 @@ export default function RecipesPage() {
             <span className="font-medium">Dietary:</span>
           </div>
           {DIETARY_FILTERS.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => toggleDietary(tag)}
-              className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors capitalize ${
-                dietaryFilters.includes(tag)
-                  ? 'bg-emerald-600 text-white border-emerald-600'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-emerald-300'
-              }`}
-            >
+            <TogglePill key={tag} active={dietaryFilters.includes(tag)} onClick={() => toggleDietary(tag)}>
               {tag}
-            </button>
+            </TogglePill>
           ))}
         </div>
 
@@ -168,15 +163,15 @@ export default function RecipesPage() {
       {loading ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-64 rounded-xl bg-slate-100 animate-pulse" />
+            <Skeleton key={i} className="h-64" />
           ))}
         </div>
       ) : sorted.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <BookOpen className="h-12 w-12 text-slate-200 mb-4" />
-          <p className="font-medium text-slate-500">No recipes match your current filters</p>
-          <p className="text-sm text-slate-400 mt-1">Try removing some dietary filters or add more pantry items</p>
-        </div>
+        <EmptyState
+          icon={BookOpen}
+          title="No recipes match your current filters"
+          description="Try removing some dietary filters or add more pantry items"
+        />
       ) : (
         <>
           <p className="text-sm text-slate-500">{sorted.length} recipes found</p>

@@ -12,6 +12,8 @@ import { getPantryItems } from '@/lib/db/pantry'
 import { isExpiringSoon, isExpired, isLowStock, formatCurrency } from '@/lib/utils'
 import type { PantryItem } from '@/types'
 import { toast } from 'sonner'
+import { Skeleton } from '@/components/ui/skeleton'
+import { EmptyState } from '@/components/ui/empty-state'
 
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316']
 
@@ -82,19 +84,31 @@ export default function InsightsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <BarChart3 className="h-8 w-8 text-slate-300 animate-pulse" />
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <Skeleton className="h-7 w-48" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-20" />
+          ))}
+        </div>
+        <div className="grid lg:grid-cols-2 gap-6">
+          <Skeleton className="h-64" />
+          <Skeleton className="h-64" />
+        </div>
       </div>
     )
   }
 
   if (pantryItems.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <BarChart3 className="h-12 w-12 text-slate-200 mb-4" />
-        <p className="font-medium text-slate-500">No data yet</p>
-        <p className="text-sm text-slate-400 mt-1">Add items to your pantry to see insights</p>
-      </div>
+      <EmptyState
+        icon={BarChart3}
+        title="No data yet"
+        description="Add items to your pantry to see insights"
+      />
     )
   }
 

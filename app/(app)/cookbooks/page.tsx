@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { ExternalLink, Star, Library } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
+import { TogglePill } from '@/components/ui/toggle-pill'
 import { COOKBOOK_CATEGORIES } from '@/lib/data'
 import type { Cookbook } from '@/types'
 
@@ -55,17 +57,14 @@ export default function CookbooksPage() {
 
       <div className="flex items-center gap-2 flex-wrap">
         {categories.map((cat) => (
-          <button
+          <TogglePill
             key={cat}
+            active={activeCategory === cat}
             onClick={() => setActiveCategory(cat)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium border transition-colors ${
-              activeCategory === cat
-                ? 'bg-amber-600 text-white border-amber-600'
-                : 'bg-white text-slate-600 border-slate-200 hover:border-amber-300'
-            }`}
+            className="px-4 py-1.5 text-sm normal-case"
           >
             {cat}
-          </button>
+          </TogglePill>
         ))}
       </div>
 
@@ -73,7 +72,28 @@ export default function CookbooksPage() {
         📚 Live cookbook recommendations from Open Library. Book details and availability vary by edition and region.
       </p>
 
-      {isLoading && <p className="text-sm text-slate-500 py-8 text-center">Loading cookbooks...</p>}
+      {isLoading && (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Card key={i} className="flex flex-col">
+              <CardContent className="p-5 flex flex-col h-full">
+                <div className="flex items-start gap-4 mb-4">
+                  <Skeleton className="flex-shrink-0 w-14 h-20" />
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-1/2" />
+                    <Skeleton className="h-3 w-2/3" />
+                  </div>
+                </div>
+                <Skeleton className="h-3 w-full mb-1.5" />
+                <Skeleton className="h-3 w-full mb-1.5" />
+                <Skeleton className="h-3 w-2/3 mb-4" />
+                <Skeleton className="h-9 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
       {!isLoading && error && (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
       )}
