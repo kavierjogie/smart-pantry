@@ -64,6 +64,7 @@ export function ShoppingItemRow({ item, onToggle, onDelete, onMoveToStock }: Pro
               size="icon"
               className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
               title="Move to pantry"
+              aria-label="Move to pantry"
               onClick={() => setMoveOpen(true)}
             >
               <ArrowDownToLine className="h-4 w-4" />
@@ -73,6 +74,7 @@ export function ShoppingItemRow({ item, onToggle, onDelete, onMoveToStock }: Pro
             variant="ghost"
             size="icon"
             className="h-8 w-8 text-slate-400 hover:text-red-600"
+            aria-label="Delete item"
             onClick={() => onDelete(item.id)}
           >
             <Trash2 className="h-4 w-4" />

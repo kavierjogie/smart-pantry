@@ -1,6 +1,11 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { differenceInDays, format, parseISO } from 'date-fns'
+import {
+  Carrot, Milk, Beef, Fish, Wheat, Package,
+  Snowflake, CupSoda, Droplet, Cookie, Croissant, Leaf,
+  type LucideIcon,
+} from 'lucide-react'
 import type { PantryItem } from '@/types'
 
 export function cn(...inputs: ClassValue[]) {
@@ -52,23 +57,23 @@ export function getExpiryColor(dateStr: string | null): string {
   return 'text-green-600'
 }
 
-export function getCategoryIcon(category: string): string {
-  const icons: Record<string, string> = {
-    produce: '🥦',
-    dairy: '🥛',
-    meat: '🥩',
-    seafood: '🐟',
-    grains: '🌾',
-    canned: '🥫',
-    frozen: '🧊',
-    beverages: '🥤',
-    condiments: '🫙',
-    snacks: '🍪',
-    baking: '🫓',
-    spices: '🌿',
-    other: '📦',
+export function getCategoryIcon(category: string): LucideIcon {
+  const icons: Record<string, LucideIcon> = {
+    produce: Carrot,
+    dairy: Milk,
+    meat: Beef,
+    seafood: Fish,
+    grains: Wheat,
+    canned: Package,
+    frozen: Snowflake,
+    beverages: CupSoda,
+    condiments: Droplet,
+    snacks: Cookie,
+    baking: Croissant,
+    spices: Leaf,
+    other: Package,
   }
-  return icons[category] || '📦'
+  return icons[category] || Package
 }
 
 export function formatCurrency(amount: number): string {

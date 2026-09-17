@@ -9,7 +9,7 @@ import { BarChart3, TrendingDown, AlertTriangle, DollarSign } from 'lucide-react
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/client'
 import { getPantryItems } from '@/lib/db/pantry'
-import { isExpiringSoon, isExpired, isLowStock, formatCurrency, getCategoryIcon } from '@/lib/utils'
+import { isExpiringSoon, isExpired, isLowStock, formatCurrency } from '@/lib/utils'
 import type { PantryItem } from '@/types'
 import { toast } from 'sonner'
 
@@ -63,7 +63,7 @@ export default function InsightsPage() {
       return acc
     }, {})
   )
-    .map(([name, value]) => ({ name, value, icon: getCategoryIcon(name) }))
+    .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value)
 
   const totalPurchaseValue = pantryItems.reduce((sum, i) => sum + (i.purchase_price || 0), 0)
@@ -238,27 +238,6 @@ export default function InsightsPage() {
           </CardContent>
         </Card>
       )}
-
-      {/* Category breakdown detail */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Pantry breakdown</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {byCategory.map((cat) => (
-              <div key={cat.name} className="flex items-center gap-3 rounded-lg bg-slate-50 p-3">
-                <span className="text-xl">{cat.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-800 capitalize">{cat.name}</p>
-                  <p className="text-xs text-slate-500">{cat.value} item{cat.value !== 1 ? 's' : ''}</p>
-                </div>
-                <span className="text-sm font-bold text-emerald-600">{cat.value}</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

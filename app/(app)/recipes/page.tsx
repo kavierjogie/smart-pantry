@@ -110,7 +110,7 @@ export default function RecipesPage() {
       </div>
 
       {/* Filters */}
-      <div className="space-y-3">
+      <div className="space-y-3 border rounded-lg bg-slate-50 p-3">
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex items-center gap-2 text-sm text-slate-600">
             <Filter className="h-4 w-4" />

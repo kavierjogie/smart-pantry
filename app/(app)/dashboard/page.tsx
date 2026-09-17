@@ -209,20 +209,23 @@ export default function DashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {[...expiredItems, ...expiringItems].slice(0, 5).map((item) => (
-                  <div key={item.id} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span>{getCategoryIcon(item.category)}</span>
-                      <span className="truncate">{item.name}</span>
+                {[...expiredItems, ...expiringItems].slice(0, 5).map((item) => {
+                  const CategoryIcon = getCategoryIcon(item.category)
+                  return (
+                    <div key={item.id} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <CategoryIcon className="h-4 w-4 text-slate-500 shrink-0" />
+                        <span className="truncate">{item.name}</span>
+                      </div>
+                      <Badge
+                        variant={isExpired(item.expiry_date) ? 'destructive' : 'warning'}
+                        className="text-xs shrink-0 ml-2"
+                      >
+                        {isExpired(item.expiry_date) ? 'Expired' : formatDate(item.expiry_date)}
+                      </Badge>
                     </div>
-                    <Badge
-                      variant={isExpired(item.expiry_date) ? 'destructive' : 'warning'}
-                      className="text-xs shrink-0 ml-2"
-                    >
-                      {isExpired(item.expiry_date) ? 'Expired' : formatDate(item.expiry_date)}
-                    </Badge>
-                  </div>
-                ))}
+                  )
+                })}
                 <Link href="/pantry" className="text-xs text-emerald-600 hover:underline font-medium">
                   View all pantry items →
                 </Link>
