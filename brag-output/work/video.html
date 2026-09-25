@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Smart Pantry brag</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style type="text/tailwindcss">
+  @theme inline {
+    --color-background: hsl(var(--background));
+    --color-foreground: hsl(var(--foreground));
+    --color-card: hsl(var(--card));
+    --color-card-foreground: hsl(var(--card-foreground));
+    --color-primary: hsl(var(--primary));
+    --color-primary-foreground: hsl(var(--primary-foreground));
+    --color-secondary: hsl(var(--secondary));
+    --color-secondary-foreground: hsl(var(--secondary-foreground));
+    --color-muted-foreground: hsl(var(--muted-foreground));
+    --color-border: hsl(var(--border));
+    --color-input: hsl(var(--input));
+  }
+  :root {
+    --background: 0 0% 100%; --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%; --card-foreground: 222.2 84% 4.9%;
+    --primary: 142.1 70.6% 45.3%; --primary-foreground: 144.9 80.4% 10%;
+    --secondary: 210 40% 96.1%; --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --border: 214.3 31.8% 91.4%; --input: 214.3 31.8% 91.4%;
+  }
+  * { border-color: hsl(var(--border)); box-sizing: border-box; }
+</style>
+<style>
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #fff; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #0f172a; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden;
+    background: radial-gradient(1200px 700px at 50% -10%, #d1fae5 0%, rgba(209,250,229,0) 70%), #f8fafc; }
+  .scene { position: absolute; inset: 0; }
+  .center { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .headline { font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; text-align: center; }
+  .w { display: inline-block; will-change: transform, opacity; }
+  .caption { position: absolute; left: 0; right: 0; top: 46px; text-align: center; font-size: 64px; }
+  .win { position: absolute; left: 128px; top: 172px; width: 1280px; height: 780px; transform-origin: 0 0;
+    border-radius: 18px 18px 0 0; overflow: hidden; background: #fff;
+    box-shadow: 0 40px 120px -20px rgba(6,78,59,.28), 0 0 0 1px rgba(15,23,42,.06); }
+  .cam { position: absolute; inset: 0; transform-origin: 0 0; }
+  svg.lucide { display: block; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 1. Hook -->
+  <div class="scene center" id="s1">
+    <div class="headline" id="h1" style="font-size:104px; margin-bottom:210px">Your spinach has <span style="color:#d97706">one day left.</span></div>
+    <div id="card1" style="width:560px; transform-origin:50% 50%">
+      <div class="rounded-xl border bg-card text-card-foreground shadow-sm flex items-center gap-3 p-4 border-amber-200 bg-amber-50/30" style="background:#fffdf5">
+        <div class="flex-shrink-0 text-slate-500"><i data-lucide="carrot" class="h-6 w-6"></i></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-medium text-slate-900 truncate">Baby spinach</span>
+            <div id="badge1" class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold border-transparent bg-amber-100 text-amber-800 shrink-0">Expires today</div>
+          </div>
+          <div class="flex items-center gap-2 mt-1 text-sm text-slate-500 flex-wrap">
+            <span class="text-sm font-medium text-slate-700">200 g</span>
+            <span class="text-sm capitalize text-slate-500 bg-slate-100 rounded px-1.5 py-0.5">produce</span>
+            <span class="text-xs text-red-500">Expires Sep 25, 2026</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 shrink-0 text-slate-400">
+          <div class="h-8 w-8 flex items-center justify-center"><i data-lucide="pencil" class="h-4 w-4"></i></div>
+          <div class="h-8 w-8 flex items-center justify-center"><i data-lucide="trash-2" class="h-4 w-4"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Reveal -->
+  <div class="scene center" id="s2">
+    <div id="logo2" class="flex items-center justify-center bg-emerald-600 text-white" style="width:168px;height:168px;border-radius:44px;box-shadow:0 30px 80px -20px rgba(5,150,105,.6)">
+      <i data-lucide="chef-hat" style="width:92px;height:92px;stroke-width:1.75"></i>
+    </div>
+    <div class="headline" id="name2" style="font-size:136px;margin-top:44px">Smart Pantry</div>
+    <div id="sub2" style="font-size:40px;color:#64748b;font-weight:500;margin-top:10px">Recipe Assistant</div>
+    <div class="headline" id="line2" style="font-size:60px;margin-top:64px;font-weight:700;color:#334155">Discover recipes based on <span style="color:#059669">what you have.</span></div>
+  </div>
+
+  <!-- 3+4. Dashboard -->
+  <div class="scene" id="s3">
+    <div class="caption headline" id="capA">It keeps an eye on <span style="color:#d97706">every expiry date.</span></div>
+    <div class="caption headline" id="capB">Recipes ranked by what's <span style="color:#059669">already in your kitchen.</span></div>
+    <div class="win" id="win3">
+      <div class="cam" id="cam3">
+        <div class="flex" style="width:1280px;min-height:780px">
+          <aside class="flex flex-col w-64 border-r bg-white px-4 py-6" style="min-height:780px">
+            <div class="flex items-center gap-2 px-3 mb-8">
+              <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white"><i data-lucide="chef-hat" class="h-5 w-5"></i></div>
+              <div><p class="text-sm font-semibold text-slate-900">Smart Pantry</p><p class="text-xs text-slate-500">Recipe Assistant</p></div>
+            </div>
+            <nav class="flex flex-col gap-1 flex-1" data-nav="dashboard"></nav>
+          </aside>
+          <main class="flex-1 p-8">
+            <div class="space-y-8">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
+                  <p class="text-slate-500 text-sm mt-1">Friday, 25 September</p>
+                </div>
+                <div class="flex gap-2">
+                  <div class="inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground text-sm font-medium h-9 px-3"><i data-lucide="plus" class="h-4 w-4"></i>Add item</div>
+                  <div class="inline-flex items-center rounded-md border bg-white text-sm font-medium h-9 px-3">Find recipes</div>
+                </div>
+              </div>
+              <div class="grid grid-cols-4 gap-4" id="stats"></div>
+              <div class="grid grid-cols-3 gap-6">
+                <div class="col-span-2 space-y-4">
+                  <h2 class="text-lg font-semibold text-slate-900">Cook tonight</h2>
+                  <div class="grid grid-cols-2 gap-4" id="recipes"></div>
+                </div>
+                <div class="space-y-4">
+                  <div class="rounded-xl border bg-card shadow-sm">
+                    <div class="flex flex-col p-6 pb-3"><h3 class="text-base font-semibold leading-none tracking-tight flex items-center gap-2"><i data-lucide="clock" class="h-4 w-4 text-amber-500"></i>Use these first</h3></div>
+                    <div class="p-6 pt-0 space-y-2" id="usefirst"></div>
+                  </div>
+                  <div class="rounded-xl border bg-card shadow-sm">
+                    <div class="flex flex-col p-6 pb-3"><h3 class="text-base font-semibold leading-none tracking-tight flex items-center gap-2"><i data-lucide="shopping-cart" class="h-4 w-4 text-blue-500"></i>Shopping list<span class="ml-auto inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-secondary text-secondary-foreground">4</span></h3></div>
+                    <div class="p-6 pt-0 space-y-2 text-sm">
+                      <div class="flex items-center gap-2"><div class="h-4 w-4 rounded border border-slate-300"></div>Rice<span class="text-slate-400 text-xs ml-auto">1 kg</span></div>
+                      <div class="flex items-center gap-2"><div class="h-4 w-4 rounded border border-slate-300"></div>Olive oil<span class="text-slate-400 text-xs ml-auto">1 bottle</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+      <!-- viewport-fixed overlays (not affected by camera) -->
+      <div id="toast" class="absolute flex items-center gap-2 rounded-lg border bg-white shadow-lg px-4 py-3 text-sm font-medium text-slate-900" style="right:24px;top:612px;width:300px">
+        <i data-lucide="circle-check" class="h-5 w-5 text-emerald-600"></i>Added to shopping list
+      </div>
+      <svg id="cursor" width="26" height="30" viewBox="0 0 26 30" style="position:absolute;left:0;top:0;filter:drop-shadow(0 3px 6px rgba(0,0,0,.25))"><path d="M3 2 L3 24 L9 18.5 L13 27 L17 25.2 L13 16.8 L21 16.8 Z" fill="#0f172a" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+
+  <!-- 5. Assistant -->
+  <div class="scene" id="s5">
+    <div class="caption headline" id="capC">Ask the AI. <span style="color:#7c3aed">It knows your pantry.</span></div>
+    <div class="win" id="win5">
+      <div class="flex" style="width:1280px;height:780px">
+        <aside class="flex flex-col w-64 border-r bg-white px-4 py-6">
+          <div class="flex items-center gap-2 px-3 mb-8">
+            <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white"><i data-lucide="chef-hat" class="h-5 w-5"></i></div>
+            <div><p class="text-sm font-semibold text-slate-900">Smart Pantry</p><p class="text-xs text-slate-500">Recipe Assistant</p></div>
+          </div>
+          <nav class="flex flex-col gap-1 flex-1" data-nav="assistant"></nav>
+        </aside>
+        <main class="flex-1 p-8" style="zoom:1.3">
+          <div class="flex flex-col" style="height:520px">
+            <div class="flex items-center justify-between pb-4 border-b mb-4">
+              <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100"><i data-lucide="sparkles" class="h-5 w-5 text-violet-600"></i></div>
+                <div><h1 class="text-lg font-bold text-slate-900">AI Food Assistant</h1><p class="text-xs text-slate-500">Knows about your 12 pantry items</p></div>
+              </div>
+            </div>
+            <div class="flex-1 space-y-4">
+              <div class="flex gap-3 flex-row-reverse" id="umsg">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white"><i data-lucide="user" class="h-4 w-4"></i></div>
+                <div class="max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed bg-emerald-600 text-white rounded-tr-sm">What can I make with the spinach tonight?</div>
+              </div>
+              <div class="flex gap-3" id="dots">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-600"><i data-lucide="bot" class="h-4 w-4"></i></div>
+                <div class="bg-white border rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm"><div class="flex gap-1"><div class="d h-2 w-2 rounded-full bg-violet-400"></div><div class="d h-2 w-2 rounded-full bg-violet-400"></div><div class="d h-2 w-2 rounded-full bg-violet-400"></div></div></div>
+              </div>
+              <div class="flex gap-3" id="amsg">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-600"><i data-lucide="bot" class="h-4 w-4"></i></div>
+                <div class="max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed bg-white border text-slate-800 rounded-tl-sm shadow-sm" id="areply"><strong>Lentil Dal</strong> — stir the spinach in for the last 5 minutes.</div>
+              </div>
+            </div>
+            <div class="pt-4 border-t mt-4">
+              <div class="flex gap-2 items-end">
+                <div class="flex-1 rounded-md border px-3 py-2.5 text-sm" style="min-height:44px"><span id="typed"></span><span id="caret" style="display:inline-block;width:1.5px;height:16px;background:#0f172a;vertical-align:-3px;margin-left:1px"></span><span id="ph" class="text-slate-400">Ask about recipes, substitutions, techniques…</span></div>
+                <div id="send" class="h-11 w-11 shrink-0 rounded-md bg-primary text-primary-foreground flex items-center justify-center"><i data-lucide="send" class="h-4 w-4"></i></div>
+              </div>
+              <p class="text-xs text-slate-400 mt-2">Powered by Groq — your pantry context is included automatically · Press Enter to send</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Punchline + lockup -->
+  <div class="scene center" id="s6a">
+    <div id="leaf6" class="flex items-center justify-center rounded-full bg-emerald-100 text-emerald-600" style="width:132px;height:132px;margin-bottom:40px"><i data-lucide="leaf" style="width:68px;height:68px"></i></div>
+    <div class="headline" id="h6" style="font-size:150px">The spinach <span style="color:#059669">lives.</span></div>
+  </div>
+  <div class="scene center" id="s6b">
+    <div class="flex items-center" style="gap:40px">
+      <div id="logo6" class="flex items-center justify-center bg-emerald-600 text-white" style="width:150px;height:150px;border-radius:40px;box-shadow:0 30px 80px -20px rgba(5,150,105,.6)"><i data-lucide="chef-hat" style="width:82px;height:82px;stroke-width:1.75"></i></div>
+      <div>
+        <div class="headline" id="name6" style="font-size:120px;text-align:left">Smart Pantry</div>
+        <div id="tag6" style="font-size:44px;color:#475569;font-weight:600;margin-top:6px">Track your pantry. <span style="color:#059669">Reduce waste.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const P = (t, a, b) => clamp((t - a) / (b - a));
+const out3 = (x) => 1 - Math.pow(1 - x, 3);
+const inout = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const back = (x) => { const c1 = 1.4, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const DUR = 23.5;
+
+// ---- build repeated app markup ----
+const NAV = [['dashboard','Dashboard','layout-dashboard'],['pantry','Pantry','package'],['recipes','Recipes','book-open'],['shopping','Shopping List','shopping-cart'],['assistant','AI Assistant','message-square'],['insights','Insights','chart-column'],['cookbooks','Cookbooks','library'],['profile','Profile','circle-user']];
+$$('nav[data-nav]').forEach(n => {
+  n.innerHTML = NAV.map(([k, l, ic]) => {
+    const a = k === n.dataset.nav;
+    return `<div class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium ${a ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600'}"><i data-lucide="${ic}" class="h-5 w-5 shrink-0 ${a ? 'text-emerald-600' : 'text-slate-400'}"></i>${l}</div>`;
+  }).join('') + `<div class="mt-auto flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600"><i data-lucide="log-out" class="h-5 w-5 shrink-0 text-slate-400"></i>Sign out</div>`;
+});
+const STATS = [['package','Pantry items',12,'12 items in stock','bg-emerald-100 text-emerald-700'],['trending-down','Running low',2,'Rice, Olive oil','bg-amber-100 text-amber-700'],['clock','Expiring soon',3,'Within 7 days','bg-orange-100 text-orange-700'],['shopping-cart','Shopping list',4,'items to buy','bg-blue-100 text-blue-700']];
+$('#stats').innerHTML = STATS.map(([ic, l, v, s, c]) => `<div class="rounded-xl border bg-card shadow-sm stat"><div class="p-5"><div class="flex items-center justify-between"><div><p class="text-sm text-slate-500">${l}</p><p class="text-3xl font-bold text-slate-900 mt-1" data-v="${v}">0</p><p class="text-xs text-slate-400 mt-0.5">${s}</p></div><div class="flex h-12 w-12 items-center justify-center rounded-xl ${c}"><i data-lucide="${ic}" class="h-6 w-6"></i></div></div></div></div>`).join('');
+const RECIPES = [
+  { id: 'dal', name: 'Lentil Dal', diff: 'easy', desc: 'A warming Indian dal with red lentils, tomatoes, and aromatic spices. Perfect over basmati rice.', have: 9, total: 10, pct: 90, cuisine: 'Indian', grad: 'from-orange-400 to-red-500', tags: ['vegan','vegetarian','gluten-free'], missing: 'coconut milk' },
+  { id: 'shak', name: 'Shakshuka', diff: 'easy', desc: 'Eggs poached in a spiced tomato and pepper sauce. A hearty one-pan breakfast or dinner.', have: 7, total: 9, pct: 78, cuisine: 'Middle Eastern', grad: 'from-amber-400 to-orange-500', tags: ['vegetarian','gluten-free'], missing: 'bell pepper, fresh parsley' },
+];
+$('#recipes').innerHTML = RECIPES.map(r => `<div class="rounded-xl border bg-card shadow-sm overflow-hidden rcard" id="rc-${r.id}">
+  <div class="flex items-center justify-center bg-gradient-to-br ${r.grad} h-36 w-full"><i data-lucide="chef-hat" class="h-10 w-10 text-white/80"></i></div>
+  <div class="flex flex-col space-y-1.5 p-6 pb-3"><div class="flex items-start justify-between gap-2"><h3 class="text-base leading-snug font-semibold tracking-tight">${r.name}</h3><div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold border-transparent bg-green-100 text-green-800 shrink-0 capitalize">${r.diff}</div></div><p class="text-sm text-slate-500 line-clamp-2">${r.desc}</p></div>
+  <div class="p-6 pt-0 space-y-3">
+    <div class="space-y-1.5"><div class="flex items-center justify-between text-xs text-slate-600"><span>${r.have} of ${r.total} ingredients on hand</span><span class="font-medium pct">0%</span></div>
+      <div class="relative h-1.5 w-full overflow-hidden rounded-full bg-secondary"><div class="h-full w-full bg-emerald-500 bar" style="transform:translateX(-100%)"></div></div></div>
+    <div class="flex items-center gap-1 text-xs text-slate-500"><i data-lucide="chef-hat" class="h-3.5 w-3.5"></i>${r.cuisine}</div>
+    <div class="flex flex-wrap gap-1">${r.tags.map(t => `<div class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-secondary text-secondary-foreground capitalize">${t}</div>`).join('')}</div>
+    <p class="text-xs text-amber-700 bg-amber-50 rounded-lg px-2 py-1.5 miss">Missing: ${r.missing}</p>
+  </div></div>`).join('');
+const USE = [['carrot','Baby spinach','Sep 25, 2026'],['milk','Plain yoghurt','Sep 27, 2026'],['leaf','Coriander','Sep 29, 2026']];
+$('#usefirst').innerHTML = USE.map(([ic, n, d], i) => `<div class="flex items-center justify-between text-sm rounded-md uf" style="margin:0 -6px;padding:3px 6px"><div class="flex items-center gap-2 min-w-0"><i data-lucide="${ic}" class="h-4 w-4 text-slate-500 shrink-0"></i><span class="truncate">${n}</span></div><div class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold border-transparent bg-amber-100 text-amber-800 text-xs shrink-0 ml-2">${d}</div></div>`).join('') + `<div class="text-xs text-emerald-600 font-medium">View all pantry items →</div>`;
+
+// split headlines into word spans for staggered reveals
+function splitWords(el) {
+  const walk = (node) => [...node.childNodes].forEach(c => {
+    if (c.nodeType === 3) {
+      const frag = document.createDocumentFragment();
+      c.textContent.split(/(\s+)/).forEach(tok => {
+        if (!tok) return;
+        if (/^\s+$/.test(tok)) frag.appendChild(document.createTextNode(tok));
+        else { const s = document.createElement('span'); s.className = 'w'; s.textContent = tok; frag.appendChild(s); }
+      });
+      c.replaceWith(frag);
+    } else walk(c);
+  });
+  walk(el);
+}
+['#h1', '#name2', '#line2', '#capA', '#capB', '#capC', '#h6', '#name6', '#tag6'].forEach(s => splitWords($(s)));
+
+// helpers
+function words(sel, t, a, step = 0.055, d = 0.42, dy = 34) {
+  $$(sel + ' .w').forEach((w, i) => {
+    const x = out3(P(t, a + i * step, a + i * step + d));
+    w.style.opacity = x;
+    w.style.transform = `translateY(${(1 - x) * dy}px)`;
+    w.style.filter = x < 1 ? `blur(${(1 - x) * 8}px)` : 'none';
+  });
+}
+function fadeOut(el, t, a, d = 0.28, dy = -24) {
+  const x = inout(P(t, a, a + d));
+  el.style.opacity = 1 - x;
+  el.style.transform = (el.dataset.base || '') + ` translateY(${x * dy}px)`;
+  return x;
+}
+function vis(el, on) { el.style.display = on ? '' : 'none'; }
+const WIN_S = 1.3;
+
+let geo = null;
+function measure() {
+  const cam = $('#cam3'); cam.style.transform = 'none';
+  const cr = cam.getBoundingClientRect(), k = cr.width / 1280;
+  const r = $('#rc-dal').getBoundingClientRect();
+  geo = { cx: (r.left - cr.left + r.width / 2) / k, cy: (r.top - cr.top + r.height / 2) / k };
+}
+
+function render(t) {
+  // --- Scene 1: hook (0 – 3.25)
+  const s1 = $('#s1'); vis(s1, t < 3.3);
+  if (t < 3.3) {
+    const c = back(P(t, 0.0, 0.55));
+    const card = $('#card1');
+    card.style.opacity = clamp(P(t, 0, 0.25));
+    card.style.transform = `scale(${lerp(1.7, 2.3, c)})`;
+    const pulse = (a) => { const x = P(t, a, a + 0.7); return x > 0 && x < 1 ? `0 0 0 ${x * 12}px rgba(245,158,11,${0.45 * (1 - x)})` : 'none'; };
+    const b = $('#badge1'); const bp = P(t, 0.85, 1.1);
+    b.style.transform = `scale(${1 + 0.25 * Math.sin(bp * Math.PI)})`;
+    b.style.boxShadow = t < 1.8 ? pulse(0.9) : pulse(1.9);
+    words('#h1', t, 0.3, 0.07);
+    s1.style.opacity = 1 - inout(P(t, 2.95, 3.25));
+    s1.style.transform = `scale(${1 - 0.04 * inout(P(t, 2.95, 3.25))})`;
+  }
+
+  // --- Scene 2: reveal (3.25 – 6.3)
+  const s2 = $('#s2'); vis(s2, t >= 3.25 && t < 6.35);
+  if (t >= 3.25 && t < 6.35) {
+    const l = back(P(t, 3.3, 3.8));
+    $('#logo2').style.opacity = P(t, 3.3, 3.45);
+    $('#logo2').style.transform = `scale(${l}) rotate(${(1 - l) * -12}deg)`;
+    words('#name2', t, 3.45, 0.09, 0.5, 40);
+    const sb = out3(P(t, 3.7, 4.1)); $('#sub2').style.opacity = sb; $('#sub2').style.transform = `translateY(${(1 - sb) * 16}px)`;
+    words('#line2', t, 4.0, 0.06);
+    s2.style.opacity = 1 - inout(P(t, 6.05, 6.3));
+  }
+
+  // --- Scenes 3+4: dashboard (6.3 – 14.55)
+  const s3 = $('#s3'); vis(s3, t >= 6.3 && t < 14.6);
+  if (t >= 6.3 && t < 14.6) {
+    const w = out3(P(t, 6.3, 6.9));
+    const wo = inout(P(t, 14.25, 14.55));
+    const win = $('#win3');
+    win.style.opacity = clamp(P(t, 6.3, 6.55)) * (1 - wo);
+    win.style.transform = `translateY(${(1 - w) * 260 + wo * 40}px) scale(${WIN_S})`;
+    // captions
+    words('#capA', t, 6.55, 0.05); $('#capA').style.opacity = 1 - inout(P(t, 10.15, 10.4));
+    vis($('#capA'), t < 10.45);
+    words('#capB', t, 10.5, 0.05); $('#capB').style.opacity = 1 - inout(P(t, 14.2, 14.45));
+    vis($('#capB'), t >= 10.45);
+    // stat count-up + stagger
+    $$('#stats .stat').forEach((el, i) => {
+      const x = out3(P(t, 6.75 + i * 0.08, 7.2 + i * 0.08));
+      el.style.opacity = x; el.style.transform = `translateY(${(1 - x) * 14}px)`;
+      const n = el.querySelector('[data-v]'); n.textContent = Math.round(+n.dataset.v * out3(P(t, 6.9, 7.9)));
+    });
+    // recipe cards
+    $$('#recipes .rcard').forEach((el, i) => {
+      const x = out3(P(t, 7.0 + i * 0.12, 7.5 + i * 0.12));
+      el.style.opacity = x; el.style.transform = `translateY(${(1 - x) * 18}px)`;
+      const r = RECIPES[i];
+      const f = i === 0 ? inout(P(t, 11.0, 12.1)) : out3(P(t, 7.4, 8.4));
+      el.querySelector('.bar').style.transform = `translateX(-${100 - r.pct * f}%)`;
+      el.querySelector('.pct').textContent = Math.round(r.pct * f) + '%';
+    });
+    // use these first
+    $$('#usefirst .uf').forEach((el, i) => {
+      const x = out3(P(t, 7.6 + i * 0.18, 8.0 + i * 0.18));
+      el.style.opacity = x; el.style.transform = `translateX(${(1 - x) * 20}px)`;
+      if (i === 0) { const h = Math.sin(Math.PI * P(t, 8.5, 9.9)); el.style.background = `rgba(254,243,199,${h})`; el.style.boxShadow = `inset 0 0 0 1px rgba(245,158,11,${h * 0.6})`; }
+    });
+    // camera zoom into Lentil Dal
+    const z = inout(P(t, 10.25, 11.15));
+    const Z = 1.45, tx = 600 - geo.cx * Z, ty = 350 - geo.cy * Z;
+    $('#cam3').style.transform = `translate(${tx * z}px, ${ty * z}px) scale(${lerp(1, Z, z)})`;
+    // missing line highlight
+    const miss = $('#rc-dal .miss'); const mh = out3(P(t, 12.1, 12.4));
+    miss.style.boxShadow = `0 0 0 ${mh * 2}px rgba(245,158,11,.55)`;
+    // cursor → click missing line → toast
+    const cur = $('#cursor');
+    const mr = miss.getBoundingClientRect(), wr = win.getBoundingClientRect();
+    const scale = wr.width / 1280;
+    const tgx = (mr.left - wr.left) / scale + 150, tgy = (mr.top - wr.top) / scale + mr.height / scale / 2;
+    const cm = inout(P(t, 12.25, 12.95));
+    cur.style.opacity = P(t, 12.2, 12.4) * (1 - P(t, 13.9, 14.1));
+    const click = Math.sin(Math.PI * P(t, 13.0, 13.2));
+    cur.style.transform = `translate(${lerp(1180, tgx, cm)}px, ${lerp(760, tgy, cm) + Math.sin(cm * Math.PI) * -40}px) scale(${1 - 0.18 * click})`;
+    const ts = out3(P(t, 13.15, 13.5));
+    const toast = $('#toast'); toast.style.opacity = ts; toast.style.transform = `translateY(${(1 - ts) * 40}px)`;
+  }
+
+  // --- Scene 5: assistant (14.6 – 19.45)
+  const s5 = $('#s5'); vis(s5, t >= 14.55 && t < 19.5);
+  if (t >= 14.55 && t < 19.5) {
+    const w = out3(P(t, 14.6, 15.15));
+    const win = $('#win5');
+    win.style.opacity = clamp(P(t, 14.6, 14.85));
+    win.style.transform = `translateY(${(1 - w) * 200}px) scale(${WIN_S})`;
+    words('#capC', t, 14.75, 0.06);
+    s5.style.opacity = 1 - inout(P(t, 19.2, 19.45));
+    const Q = 'What can I make with the spinach tonight?';
+    const n = Math.round(Q.length * P(t, 15.1, 15.8));
+    const sent = t >= 15.9;
+    $('#typed').textContent = sent ? '' : Q.slice(0, n);
+    $('#ph').style.display = (n === 0 || sent) ? 'inline' : 'none';
+    $('#caret').style.opacity = (Math.floor(t * 2.5) % 2 === 0 || (t > 15.05 && t < 15.9)) ? 1 : 0;
+    const sp = Math.sin(Math.PI * P(t, 15.8, 15.95)); $('#send').style.transform = `scale(${1 - 0.12 * sp})`;
+    const um = back(P(t, 15.9, 16.25)); const u = $('#umsg');
+    u.style.display = t >= 15.9 ? 'flex' : 'none'; u.style.opacity = P(t, 15.9, 16.0); u.style.transform = `translateY(${(1 - um) * 16}px)`;
+    const d = $('#dots'); d.style.display = (t >= 16.05 && t < 16.45) ? 'flex' : 'none';
+    $$('#dots .d').forEach((el, i) => el.style.transform = `translateY(${-5 * Math.max(0, Math.sin((t - 16.05) * 14 - i * 0.9))}px)`);
+    const am = back(P(t, 16.45, 16.8)); const a = $('#amsg');
+    a.style.display = t >= 16.45 ? 'flex' : 'none'; a.style.opacity = P(t, 16.45, 16.6); a.style.transform = `translateY(${(1 - am) * 16}px)`;
+  }
+
+  // --- Scene 6a: punchline (19.5 – 21.15)
+  const s6a = $('#s6a'); vis(s6a, t >= 19.45 && t < 21.2);
+  if (t >= 19.45 && t < 21.2) {
+    const l = back(P(t, 19.5, 19.95));
+    $('#leaf6').style.opacity = P(t, 19.5, 19.62);
+    $('#leaf6').style.transform = `scale(${l}) rotate(${(1 - l) * 40}deg)`;
+    words('#h6', t, 19.6, 0.12, 0.45, 44);
+    s6a.style.opacity = 1 - inout(P(t, 20.9, 21.15));
+    s6a.style.transform = `scale(${1 + 0.03 * P(t, 19.5, 21.15)})`;
+  }
+
+  // --- Scene 6b: lockup (21.2 – end)
+  const s6b = $('#s6b'); vis(s6b, t >= 21.15);
+  if (t >= 21.15) {
+    const l = back(P(t, 21.2, 21.7));
+    $('#logo6').style.opacity = P(t, 21.2, 21.35);
+    $('#logo6').style.transform = `scale(${l})`;
+    words('#name6', t, 21.3, 0.09, 0.45, 36);
+    words('#tag6', t, 21.55, 0.06, 0.4, 20);
+  }
+}
+
+window.ready = (async () => {
+  await new Promise(r => window.addEventListener('load', r));
+  lucide.createIcons();
+  await document.fonts.ready;
+  await new Promise(r => setTimeout(r, 600)); // let tailwind browser build styles
+  measure();
+  render(0);
+  return { unreplaced: $$('i[data-lucide]').length };
+})();
+window.render = render;
+window.DUR = DUR;
+// preview: ?t=seconds
+const qt = new URLSearchParams(location.search).get('t');
+if (qt !== null) window.ready.then(() => render(+qt));
+</script>
+</body>
+</html>
