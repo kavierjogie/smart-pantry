@@ -4,10 +4,13 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { Send, Bot, User, Sparkles, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { createClient } from '@/lib/supabase/client'
+import { getCurrentUser } from '@/lib/current-user'
 import { getPantryItems } from '@/lib/db/pantry'
 import { getProfile } from '@/lib/db/profile'
-import { isExpiringSoon, daysUntilExpiry } from '@/lib/utils'
+import { isExpiringSoon, isExpired, daysUntilExpiry } from '@/lib/utils'
+import { isDemoMode } from '@/lib/demo'
+import { SAMPLE_RECIPES } from '@/lib/data'
+import { matchRecipesToPantry } from '@/lib/recipes'
 import type { ChatMessage, PantryItem } from '@/types'
 import { cn } from '@/lib/utils'
 import { ChatMarkdown } from '@/components/assistant/ChatMarkdown'
@@ -40,6 +43,32 @@ function buildPantryContext(items: PantryItem[], profile: { dietary_preferences?
   return lines.join('\n')
 }
 
+// Demo-only fallback when the AI API is unreachable: a pantry-aware answer built locally.
+function buildOfflineReply(question: string, items: PantryItem[]): string {
+  const q = question.toLowerCase()
+  const expiring = items.filter(i => isExpiringSoon(i.expiry_date) && !isExpired(i.expiry_date))
+  const expiringNames = new Set(expiring.map(i => i.name.toLowerCase()))
+  const totalTime = (r: { prep_time: number | null; cooking_time: number | null }) => (r.prep_time ?? 0) + (r.cooking_time ?? 0)
+  const usesExpiring = (names: string[]) => names.filter(n => expiringNames.has(n.toLowerCase())).length
+
+  let matches = matchRecipesToPantry(items, SAMPLE_RECIPES)
+  if (q.includes('expir')) matches = [...matches].sort((a, b) => usesExpiring(b.availableIngredients) - usesExpiring(a.availableIngredients))
+  else if (q.includes('quick') || q.includes('easy')) matches = [...matches].sort((a, b) => totalTime(a.recipe) - totalTime(b.recipe))
+
+  const lead = q.includes('expir') && expiring.length > 0
+    ? `Use up your **${expiring.slice(0, 3).map(i => i.name).join(', ')}** first — these fit best:`
+    : 'Here are a couple of ideas based on what’s in your pantry:'
+
+  const sections = matches.slice(0, 2).map(({ recipe, availableIngredients, missingIngredients, matchPercentage }) => [
+    `### ${recipe.name}`,
+    `- **Uses from pantry:** ${availableIngredients.slice(0, 5).join(', ') || 'a few basics'}`,
+    missingIngredients.length > 0 ? `- **Need to buy:** ${missingIngredients.map(m => m.name).join(', ')}` : '- **Cost to buy:** R0',
+    `- **Match:** ${matchPercentage}% · ${totalTime(recipe)} min`,
+  ].join('\n'))
+
+  return [lead, ...sections, '_The live AI service is unavailable right now, so this suggestion was generated from your pantry offline._'].join('\n\n')
+}
+
 export default function AssistantPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
@@ -50,8 +79,7 @@ export default function AssistantPage() {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   const loadContext = useCallback(async () => {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getCurrentUser()
     if (!user) return
     const [items, prof] = await Promise.all([
       getPantryItems(user.id),
@@ -97,6 +125,7 @@ export default function AssistantPage() {
       })
 
       const data = await res.json()
+      if (!data.content && isDemoMode()) throw new Error(data.error)
 
       const assistantMsg: ChatMessage = {
         id: crypto.randomUUID(),
@@ -112,7 +141,9 @@ export default function AssistantPage() {
         {
           id: crypto.randomUUID(),
           role: 'assistant',
-          content: 'Sorry, I ran into an error. Please try again.',
+          content: isDemoMode()
+            ? buildOfflineReply(userMsg.content, pantryItems)
+            : 'Sorry, I ran into an error. Please try again.',
           timestamp: new Date(),
         },
       ])

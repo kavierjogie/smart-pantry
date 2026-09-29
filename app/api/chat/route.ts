@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { DEMO_COOKIE } from '@/lib/demo'
 
 const GROQ_MODEL = 'openai/gpt-oss-120b'
 const GROQ_TIMEOUT_MS = 30_000
@@ -47,10 +48,10 @@ function getMessageContent(value: unknown): string | null {
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    // Demo sessions (no Supabase account) are allowed; everyone else needs a real user.
+    const authorized = req.cookies.has(DEMO_COOKIE) || !!(await (await createClient()).auth.getUser()).data.user
 
-    if (!user) {
+    if (!authorized) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

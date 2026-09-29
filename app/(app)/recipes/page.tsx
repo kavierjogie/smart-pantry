@@ -7,7 +7,7 @@ import { RecipeCard } from '@/components/recipes/RecipeCard'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { TogglePill } from '@/components/ui/toggle-pill'
-import { createClient } from '@/lib/supabase/client'
+import { getCurrentUser } from '@/lib/current-user'
 import { getPantryItems } from '@/lib/db/pantry'
 import { addShoppingItem } from '@/lib/db/shopping'
 import { matchRecipesToPantry } from '@/lib/recipes'
@@ -52,8 +52,7 @@ export default function RecipesPage() {
   }, [])
 
   useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    getCurrentUser().then((user) => {
       if (user) {
         setUserId(user.id)
         loadData(user.id)

@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { createClient } from '@/lib/supabase/client'
+import { exitDemo } from '@/lib/demo'
+import { TryDemoButton } from '@/components/try-demo-button'
 import { toast } from 'sonner'
 
 export default function LoginPage() {
@@ -26,6 +28,7 @@ export default function LoginPage() {
       if (error) {
         toast.error(error.message)
       } else {
+        exitDemo()
         router.push('/dashboard')
         router.refresh()
       }
@@ -122,6 +125,8 @@ export default function LoginPage() {
               {loading ? 'Signing in…' : 'Sign in'}
             </Button>
           </form>
+
+          <TryDemoButton />
 
           <p className="text-center text-sm text-slate-500">
             No account?{' '}

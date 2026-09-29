@@ -1,7 +1,11 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { DEMO_COOKIE } from '@/lib/demo'
 
 export async function middleware(request: NextRequest) {
+  // Demo sessions use local data only, so never block them on Supabase being reachable.
+  if (request.cookies.has(DEMO_COOKIE)) return NextResponse.next({ request })
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(

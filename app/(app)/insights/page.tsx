@@ -7,7 +7,7 @@ import {
 } from 'recharts'
 import { BarChart3, TrendingDown, AlertTriangle, DollarSign } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { createClient } from '@/lib/supabase/client'
+import { getCurrentUser } from '@/lib/current-user'
 import { getPantryItems } from '@/lib/db/pantry'
 import { isExpiringSoon, isExpired, isLowStock, formatCurrency } from '@/lib/utils'
 import type { PantryItem } from '@/types'
@@ -43,8 +43,7 @@ export default function InsightsPage() {
   const [loading, setLoading] = useState(true)
 
   const load = useCallback(async () => {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getCurrentUser()
     if (!user) return
     try {
       const items = await getPantryItems(user.id)

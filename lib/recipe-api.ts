@@ -1,6 +1,18 @@
 import type { PantryItem, Recipe } from '@/types'
+import { isDemoMode } from '@/lib/demo'
+import { SAMPLE_RECIPES } from '@/lib/data'
 
 export async function getRecipesForPantry(
+  pantryItems: PantryItem[],
+  dietaryFilters: string[] = []
+): Promise<Recipe[]> {
+  if (!isDemoMode()) return fetchRecipes(pantryItems, dietaryFilters)
+  // Demo: local recipes always work; live TheMealDB results are a bonus when reachable.
+  const live = await fetchRecipes(pantryItems, dietaryFilters).catch(() => [])
+  return [...SAMPLE_RECIPES, ...live]
+}
+
+async function fetchRecipes(
   pantryItems: PantryItem[],
   dietaryFilters: string[] = []
 ): Promise<Recipe[]> {

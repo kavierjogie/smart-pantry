@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { DEMO_COOKIE } from '@/lib/demo'
 import { normalizeInstructions } from '@/lib/recipes'
 import type { Recipe, RecipeDifficulty, RecipeIngredient } from '@/types'
 
@@ -118,9 +119,9 @@ async function getMealDetails(id: string): Promise<MealDetails | null> {
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    // Demo sessions (no Supabase account) are allowed; everyone else needs a real user.
+    const authorized = request.cookies.has(DEMO_COOKIE) || !!(await (await createClient()).auth.getUser()).data.user
+    if (!authorized) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const ingredients: string[] = request.nextUrl.searchParams.get('ingredients')
       ?.split(',').map((ingredient: string) => ingredient.trim().toLowerCase()).filter(Boolean).slice(0, MAX_INGREDIENTS) || []

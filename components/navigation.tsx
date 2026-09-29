@@ -4,10 +4,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, Package, BookOpen, ShoppingCart,
-  MessageSquare, BarChart3, Library, LogOut, ChefHat, Menu, X, UserCircle,
+  MessageSquare, BarChart3, Library, LogOut, ChefHat, Menu, X, UserCircle, FlaskConical,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
+import { exitDemo } from '@/lib/demo'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -45,15 +46,34 @@ function NavLink({ href, label, icon: Icon, onClick }: {
   )
 }
 
-export function Sidebar() {
+function useSignOut(demo: boolean) {
   const router = useRouter()
-
-  async function handleSignOut() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
+  return async function handleSignOut() {
+    if (demo) {
+      exitDemo()
+    } else {
+      await createClient().auth.signOut()
+    }
     router.push('/auth/login')
-    toast.success('Signed out successfully')
+    router.refresh()
+    toast.success(demo ? 'Demo ended — thanks for exploring!' : 'Signed out successfully')
   }
+}
+
+function DemoBadge({ className }: { className?: string }) {
+  return (
+    <span
+      title="You're exploring with sample data stored in this browser"
+      className={cn('inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700', className)}
+    >
+      <FlaskConical className="h-3 w-3" />
+      Demo mode
+    </span>
+  )
+}
+
+export function Sidebar({ demo = false }: { demo?: boolean }) {
+  const handleSignOut = useSignOut(demo)
 
   return (
     <aside className="hidden lg:flex flex-col w-64 min-h-screen border-r bg-white px-4 py-6">
@@ -67,6 +87,13 @@ export function Sidebar() {
         </div>
       </div>
 
+      {demo && (
+        <div className="mx-1 -mt-4 mb-6 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2.5">
+          <DemoBadge className="border-0 bg-transparent px-0 py-0" />
+          <p className="text-xs text-slate-500 mt-1">Exploring with sample data — your changes are saved in this browser.</p>
+        </div>
+      )}
+
       <nav className="flex flex-col gap-1 flex-1">
         {links.map((link) => (
           <NavLink key={link.href} {...link} />
@@ -78,22 +105,15 @@ export function Sidebar() {
         className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors mt-4"
       >
         <LogOut className="h-5 w-5 shrink-0 text-slate-400" />
-        Sign out
+        {demo ? 'Exit demo' : 'Sign out'}
       </button>
     </aside>
   )
 }
 
-export function MobileNav() {
+export function MobileNav({ demo = false }: { demo?: boolean }) {
   const [open, setOpen] = useState(false)
-  const router = useRouter()
-
-  async function handleSignOut() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/auth/login')
-    toast.success('Signed out successfully')
-  }
+  const handleSignOut = useSignOut(demo)
 
   return (
     <>
@@ -103,6 +123,7 @@ export function MobileNav() {
             <ChefHat className="h-4 w-4" />
           </div>
           <span className="text-sm font-semibold text-slate-900">Smart Pantry</span>
+          {demo && <DemoBadge />}
         </div>
         <button
           onClick={() => setOpen(!open)}
@@ -128,7 +149,7 @@ export function MobileNav() {
                 className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors"
               >
                 <LogOut className="h-5 w-5 shrink-0 text-slate-400" />
-                Sign out
+                {demo ? 'Exit demo' : 'Sign out'}
               </button>
             </div>
           </nav>

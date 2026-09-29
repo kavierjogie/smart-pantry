@@ -1,7 +1,9 @@
 import { createClient } from '@/lib/supabase/client'
 import type { Profile } from '@/types'
+import { isDemoMode, demoGetProfile, demoSaveProfile } from '@/lib/demo'
 
 export async function getProfile(userId: string): Promise<Profile | null> {
+  if (isDemoMode()) return demoGetProfile()
   const supabase = createClient()
   const { data, error } = await supabase
     .from('profiles')
@@ -17,6 +19,7 @@ export async function upsertProfile(
   userId: string,
   updates: Partial<Omit<Profile, 'id' | 'user_id' | 'created_at' | 'updated_at'>>
 ): Promise<Profile> {
+  if (isDemoMode()) return demoSaveProfile(updates)
   const supabase = createClient()
   const { data, error } = await supabase
     .from('profiles')

@@ -11,7 +11,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { ShoppingItemRow } from '@/components/shopping/ShoppingItemRow'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
-import { createClient } from '@/lib/supabase/client'
+import { getCurrentUser } from '@/lib/current-user'
 import {
   getShoppingItems, addShoppingItem, updateShoppingItem,
   deleteShoppingItem, clearCheckedItems,
@@ -43,8 +43,7 @@ export default function ShoppingPage() {
   }, [])
 
   useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    getCurrentUser().then((user) => {
       if (user) {
         setUserId(user.id)
         loadItems(user.id)

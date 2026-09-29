@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { createClient } from '@/lib/supabase/client'
+import { exitDemo } from '@/lib/demo'
+import { TryDemoButton } from '@/components/try-demo-button'
 import { toast } from 'sonner'
 
 export default function SignupPage() {
@@ -43,6 +45,7 @@ export default function SignupPage() {
         toast.error(error.message)
       } else {
         toast.success('Account created! Redirecting…')
+        exitDemo()
         router.push('/dashboard')
         router.refresh()
       }
@@ -117,6 +120,8 @@ export default function SignupPage() {
             {loading ? 'Creating account…' : 'Create account'}
           </Button>
         </form>
+
+        <TryDemoButton />
 
         <p className="text-center text-sm text-slate-500">
           Already have an account?{' '}

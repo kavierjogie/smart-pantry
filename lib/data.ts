@@ -1,4 +1,4 @@
-import type { Recipe } from '@/types'
+import type { Cookbook, Recipe } from '@/types'
 
 export const SAMPLE_RECIPES: Recipe[] = [
   {
@@ -227,3 +227,25 @@ export const COOKBOOK_CATEGORIES = [
   'Beginner Cooking',
   'Dietary-Specific',
 ]
+
+// Offline fallback for demo mode when Open Library is unreachable.
+export const SAMPLE_COOKBOOKS: Cookbook[] = [
+  ['Salt, Fat, Acid, Heat', 'Samin Nosrat', 2017, 'General Cooking', 'Master the four elements of good cooking and you can cook anything, with or without a recipe.'],
+  ['The Food Lab', 'J. Kenji López-Alt', 2015, 'General Cooking', 'Better home cooking through science — why techniques work, tested in a home kitchen.'],
+  ['How to Cook Everything', 'Mark Bittman', 1998, 'Beginner Cooking', 'A comprehensive, approachable reference covering the essentials from eggs to roasts.'],
+  ['Plenty', 'Yotam Ottolenghi', 2010, 'Dietary-Specific', 'Vibrant, vegetable-led dishes with bold Middle Eastern and Mediterranean flavours.'],
+  ['Budget Bytes', 'Beth Moncel', 2014, 'Meal Prep', 'Simple, affordable recipes designed to stretch ingredients across the week.'],
+  ['The Blue Zones Kitchen', 'Dan Buettner', 2019, 'Healthy Cooking', 'Plant-forward recipes inspired by the world’s longest-lived communities.'],
+].map(([title, author, year, category, description], i) => ({
+  id: `sample-book-${i}`,
+  title: title as string,
+  author: author as string,
+  description: description as string,
+  category: category as string,
+  rating: 0,
+  image_url: null,
+  buy_url: `https://openlibrary.org/search?${new URLSearchParams({ q: `${title} ${author}` })}`,
+  tags: [],
+  publication_year: year as number,
+  isbn: null,
+}))

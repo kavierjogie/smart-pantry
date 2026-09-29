@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createClient } from '@/lib/supabase/client'
+import { getCurrentUser } from '@/lib/current-user'
 import { getProfile, upsertProfile } from '@/lib/db/profile'
 import { DIETARY_OPTIONS, ALLERGY_OPTIONS } from '@/lib/data'
 import { toast } from 'sonner'
@@ -43,8 +43,7 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false)
 
   const load = useCallback(async () => {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getCurrentUser()
     if (!user) return
     setUserId(user.id)
     setEmail(user.email || '')

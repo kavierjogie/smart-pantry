@@ -11,7 +11,7 @@ import { PantryItemCard } from '@/components/pantry/PantryItemCard'
 import { PantryItemForm } from '@/components/pantry/PantryItemForm'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
-import { createClient } from '@/lib/supabase/client'
+import { getCurrentUser } from '@/lib/current-user'
 import { getPantryItems, addPantryItem, updatePantryItem, deletePantryItem } from '@/lib/db/pantry'
 import { CATEGORIES } from '@/lib/data'
 import { isLowStock, isExpiringSoon, isExpired } from '@/lib/utils'
@@ -42,8 +42,7 @@ export default function PantryPage() {
   }, [])
 
   useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    getCurrentUser().then((user) => {
       if (user) {
         setUserId(user.id)
         loadItems(user.id)

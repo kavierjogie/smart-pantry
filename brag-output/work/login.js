@@ -10,12 +10,12 @@ const puppeteer = require('puppeteer-core');
     args: ['--window-size=1200,900'],
   });
   const [page] = await browser.pages();
-  await page.goto('http://localhost:3000/auth/login').catch(() => {});
+  await page.goto(process.env.BASE + '/auth/login').catch(() => {});
   const deadline = Date.now() + 20 * 60 * 1000;
   while (Date.now() < deadline && browser.connected) {
     try {
       const urls = (await browser.pages()).map(p => p.url());
-      if (urls.some(u => u.includes('localhost:3000/dashboard'))) {
+      if (urls.some(u => u.startsWith(process.env.BASE + '/dashboard'))) {
         console.log('signed in');
         await new Promise(r => setTimeout(r, 3000));
         await browser.close();

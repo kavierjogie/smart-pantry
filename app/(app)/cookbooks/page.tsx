@@ -6,7 +6,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { TogglePill } from '@/components/ui/toggle-pill'
-import { COOKBOOK_CATEGORIES } from '@/lib/data'
+import { COOKBOOK_CATEGORIES, SAMPLE_COOKBOOKS } from '@/lib/data'
+import { isDemoMode } from '@/lib/demo'
 import type { Cookbook } from '@/types'
 
 export default function CookbooksPage() {
@@ -33,6 +34,12 @@ export default function CookbooksPage() {
       })
       .catch((fetchError: unknown) => {
         if (fetchError instanceof DOMException && fetchError.name === 'AbortError') return
+        if (isDemoMode()) {
+          setCookbooks(SAMPLE_COOKBOOKS.filter(b => activeCategory === 'All' || b.category === activeCategory))
+          setError(null)
+          setLoadedCategory(activeCategory)
+          return
+        }
         setError(fetchError instanceof Error ? fetchError.message : 'Unable to load cookbooks.')
         setCookbooks([])
         setLoadedCategory(activeCategory)

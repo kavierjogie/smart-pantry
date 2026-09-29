@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { RecipeCard } from '@/components/recipes/RecipeCard'
-import { createClient } from '@/lib/supabase/client'
+import { getCurrentUser } from '@/lib/current-user'
 import { getPantryItems } from '@/lib/db/pantry'
 import { getShoppingItems } from '@/lib/db/shopping'
 import { getTopRecipes } from '@/lib/recipes'
@@ -74,8 +74,7 @@ export default function DashboardPage() {
   }, [])
 
   useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    getCurrentUser().then((user) => {
       if (user) {
         setUserId(user.id)
         loadData(user.id)
