@@ -1,5 +1,8 @@
 import type { Cookbook, Recipe } from '@/types'
 
+// Same image source as live recipes (TheMealDB thumbnails), matched to the closest dish.
+const MEALDB_IMG = 'https://www.themealdb.com/images/media/meals'
+
 export const SAMPLE_RECIPES: Recipe[] = [
   {
     id: 'r1',
@@ -30,7 +33,7 @@ export const SAMPLE_RECIPES: Recipe[] = [
     difficulty: 'easy',
     dietary_tags: ['vegetarian', 'vegan'],
     cuisine: 'Italian',
-    image_url: null,
+    image_url: `${MEALDB_IMG}/vpcqn01763335688.jpg`,
     created_at: new Date().toISOString(),
   },
   {
@@ -64,7 +67,7 @@ export const SAMPLE_RECIPES: Recipe[] = [
     difficulty: 'easy',
     dietary_tags: ['gluten-free option', 'high-protein'],
     cuisine: 'Asian',
-    image_url: null,
+    image_url: `${MEALDB_IMG}/1525872624.jpg`,
     created_at: new Date().toISOString(),
   },
   {
@@ -95,7 +98,7 @@ export const SAMPLE_RECIPES: Recipe[] = [
     difficulty: 'easy',
     dietary_tags: ['vegetarian', 'vegan', 'gluten-free'],
     cuisine: 'European',
-    image_url: null,
+    image_url: `${MEALDB_IMG}/stpuws1511191310.jpg`,
     created_at: new Date().toISOString(),
   },
   {
@@ -128,7 +131,7 @@ export const SAMPLE_RECIPES: Recipe[] = [
     difficulty: 'easy',
     dietary_tags: ['vegetarian', 'gluten-free'],
     cuisine: 'Middle Eastern',
-    image_url: null,
+    image_url: `${MEALDB_IMG}/g373701551450225.jpg`,
     created_at: new Date().toISOString(),
   },
   {
@@ -162,7 +165,7 @@ export const SAMPLE_RECIPES: Recipe[] = [
     difficulty: 'easy',
     dietary_tags: ['vegan', 'vegetarian', 'gluten-free', 'high-protein'],
     cuisine: 'Indian',
-    image_url: null,
+    image_url: `${MEALDB_IMG}/wuxrtu1483564410.jpg`,
     created_at: new Date().toISOString(),
   },
   {
@@ -192,7 +195,7 @@ export const SAMPLE_RECIPES: Recipe[] = [
     difficulty: 'easy',
     dietary_tags: ['vegetarian', 'gluten-free', 'keto'],
     cuisine: 'Greek',
-    image_url: null,
+    image_url: `${MEALDB_IMG}/bqx8mc1782684286.jpg`,
     created_at: new Date().toISOString(),
   },
 ]

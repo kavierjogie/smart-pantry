@@ -43,7 +43,8 @@ function RecipeImagePlaceholder({ cuisine, className }: { cuisine: string; class
 }
 
 function RecipeImage({ recipe, className }: { recipe: Props['match']['recipe']; className?: string }) {
-  if (recipe.image_url) {
+  const [failed, setFailed] = useState(false)
+  if (recipe.image_url && !failed) {
     return (
       <div className={`relative overflow-hidden ${className ?? ''}`}>
         <Image
@@ -52,6 +53,7 @@ function RecipeImage({ recipe, className }: { recipe: Props['match']['recipe']; 
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           className="object-cover"
+          onError={() => setFailed(true)}
         />
       </div>
     )
